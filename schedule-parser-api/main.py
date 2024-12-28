@@ -14,7 +14,7 @@ from pprint import pprint
 app = FastAPI()
 
 origins = [
-    "http://localhost:3000"
+    "https://ucscschedtocalendar.vercel.app"
 ]
 
 app.add_middleware(
