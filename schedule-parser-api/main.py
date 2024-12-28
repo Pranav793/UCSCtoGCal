@@ -54,6 +54,10 @@ class Course(BaseModel):
 async def check():
     return 'hello'
 
+@app.get('/info')
+async def info():
+    return """Hi! My name is Pranav, and I built this because I am tired of always trying to put my UCSC schedule into my Google Calendar Manually.
+    It turns out I could make this 30 minute problem into a 2 day problem! This is also my first time deploying anything and have it run live, so contact me at ppurathe@ucsc.edu if there are any issues!"""
 
 # @app.post("/parseSchedule", response_model=List[Course])
 @app.post("/parseSchedule")
