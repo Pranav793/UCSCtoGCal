@@ -128,8 +128,8 @@ def create_multi_day_event(course):
 
         # build naive local datetimes
         shift = timedelta(hours=8)
-        dt_begin = datetime.combine(aligned_start, start_t) + shift
-        dt_end   = datetime.combine(aligned_start, end_t) + shift
+        dt_begin = datetime.combine(aligned_start, start_t)
+        dt_end   = datetime.combine(aligned_start, end_t)
 
         # Convert to ICS format e.g. "20250106T160000"
         begin_str = dt_begin.strftime("%Y%m%dT%H%M%S")
