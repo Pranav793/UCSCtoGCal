@@ -149,7 +149,6 @@ def create_multi_day_event(course):
             name="DTEND;TZID=America/Los_Angeles",
             value=end_str
         ))
-        e.extra.append(ContentLine(name="bruh", value="shit"))
 
         # The RRULE => "FREQ=WEEKLY;BYDAY=MO,WE,FR;UNTIL=..."
         until_utc = end_d.strftime("%Y%m%dT235900Z")
