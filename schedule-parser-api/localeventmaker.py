@@ -148,12 +148,10 @@
 #             events.append(e)
     
 #     return events
-
 import re
 from datetime import datetime, time, timedelta
 from ics import Calendar, Event
 from ics.grammar.parse import ContentLine
-from zoneinfo import ZoneInfo  # Python 3.9+ for local time zones
 
 DAY_MAP = {
     "Mo": "MO",
@@ -170,15 +168,8 @@ ICS_DAY_ORDER = ["MO","TU","WE","TH","FR","SA","SU"]
 
 def parse_days_times(days_times_str):
     """
-    Example:
-      "MoWeFr 4:00PM - 5:05PM" -> (["MO","WE","FR"], time(16,0), time(17,5))
-
-    Returns:
-      - list of ICS day codes (["MO","WE","FR"])
-      - start_time (datetime.time)
-      - end_time (datetime.time)
+    e.g. "MoWeFr 4:00PM - 5:05PM" -> (["MO","WE","FR"], time(16,0), time(17,5))
     """
-    # e.g. "MoWeFr 4:00PM - 5:05PM"
     m = re.match(r'^([A-Za-z]+)\s+(.*)$', days_times_str.strip())
     if not m:
         return [], None, None
@@ -211,7 +202,7 @@ def parse_days_times(days_times_str):
 
 def parse_time_12h(tstr):
     """
-    Convert "4:00PM" to datetime.time(16,0), etc.
+    Convert "4:00PM" -> time(16,0)
     """
     # Insert a space before AM/PM => "4:00PM" -> "4:00 PM"
     tstr = tstr.strip()
@@ -249,7 +240,7 @@ def align_first_occurrence(start_date, wday_ics):
 
 def create_events_for_course(course):
     """
-    Creates ICS events in local "America/Los_Angeles" time.
+    Creates ICS events using *floating* local times (no Z, no VTIMEZONE).
     If a class meets multiple days (like MoWeFr), we create *one* event with BYDAY=MO,WE,FR.
     """
     events = []
@@ -275,7 +266,7 @@ def create_events_for_course(course):
 
         # Align the "first_occ" to the earliest day in the list
         earliest_wd = min(weekdays, key=lambda d: ICS_DAY_ORDER.index(d))
-        first_occ = align_first_occurrence(start_date, earliest_wd)
+        first_occ   = align_first_occurrence(start_date, earliest_wd)
 
         # Build the ICS Event
         e = Event()
@@ -283,14 +274,16 @@ def create_events_for_course(course):
         e.description = f"Instructor: {instr}\nClass Number: {cnum}"
         e.location = room
 
-        tz = ZoneInfo("America/Los_Angeles")
-        start_dt = datetime.combine(first_occ, start_t, tz)
-        end_dt   = datetime.combine(first_occ, end_t,   tz)
+        # *Floating* local times: no time zone offset, no 'Z'
+        start_dt = datetime.combine(first_occ, start_t)  # naive local datetime
+        end_dt   = datetime.combine(first_occ, end_t)    # naive local datetime
         e.begin  = start_dt
         e.end    = end_dt
 
-        # Create a single RRULE with multiple BYDAY codes
+        # Single RRULE with multiple BYDAY codes
         # e.g. "FREQ=WEEKLY;BYDAY=MO,WE,FR;UNTIL=20250314T235900Z"
+        # We keep 'UNTIL' in UTC date notation for end-of-day. 
+        # If you want local midnight on 03/14, you might do 03/15 07:00Z, etc.
         until_utc = end_date.strftime("%Y%m%dT235900Z")
         e.extra.append(
             ContentLine(
