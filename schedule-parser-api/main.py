@@ -16,7 +16,7 @@ import fileinput
 app = FastAPI()
 
 origins = [
-    "https://ucscschedtocalendar.vercel.app"
+    "https://ucscstc.vercel.app"
 ]
 
 app.add_middleware(
