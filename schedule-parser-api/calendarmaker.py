@@ -160,31 +160,31 @@ def add_vtimezone_block(cal: Calendar):
     """
     tz_lines = [
         # Note: This minimal block is typically recognized by modern calendars
-        ContentLine("X-WR-TIMEZONE","America/Los_Angeles"),
-        ContentLine("BEGIN","VTIMEZONE"),
-        ContentLine("TZID","America/Los_Angeles"),
-        ContentLine("X-LIC-LOCATION","America/Los_Angeles"),
-
-        ContentLine("BEGIN","DAYLIGHT"),
-        ContentLine("TZOFFSETFROM","-0800"),
-        ContentLine("TZOFFSETTO","-0700"),
-        ContentLine("TZNAME","PDT"),
-        ContentLine("DTSTART","19700308T020000"),
-        ContentLine("RRULE","FREQ=YEARLY;BYMONTH=3;BYDAY=2SU"),
-        ContentLine("END","DAYLIGHT"),
-
-        ContentLine("BEGIN","STANDARD"),
-        ContentLine("TZOFFSETFROM","-0700"),
-        ContentLine("TZOFFSETTO","-0800"),
-        ContentLine("TZNAME","PST"),
-        ContentLine("DTSTART","19701101T020000"),
-        ContentLine("RRULE","FREQ=YEARLY;BYMONTH=11;BYDAY=1SU"),
-        ContentLine("END","STANDARD"),
-
-        ContentLine("END","VTIMEZONE")
+        "X-WR-TIMEZONE:America/Los_Angeles",
+        "BEGIN:VTIMEZONE",
+        "TZID:America/Los_Angeles",
+        "X-LIC-LOCATION:America/Los_Angeles",
+        "BEGIN:DAYLIGHT",
+        "TZOFFSETFROM:-0800",
+        "TZOFFSETTO:-0700",
+        "TZNAME:PDT",
+        "DTSTART:19700308T020000",
+        "RRULE:FREQ=YEARLY;BYMONTH=3;BYDAY=2SU",
+        "END:DAYLIGHT",
+        "BEGIN:STANDARD",
+        "TZOFFSETFROM:-0700",
+        "TZOFFSETTO:-0800",
+        "TZNAME:PST",
+        "DTSTART:19701101T020000",
+        "RRULE:FREQ=YEARLY;BYMONTH=11;BYDAY=1SU",
+        "END:STANDARD",
+        "END:VTIMEZONE"
     ]
     for i in tz_lines:
-        cal.extra.append(i)
+        cal.extra.append(ContentLine(
+            name=i.split(":")[0],
+            value=i.split(":")[1],
+        ))
 
 def build_calendar_with_timezone(courses):
     """
