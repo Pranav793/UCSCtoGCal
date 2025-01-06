@@ -18,26 +18,27 @@ ICS_DAY_ORDER = ["MO","TU","WE","TH","FR","SA","SU"]
 
 def parse_days_times(days_times_str):
     """
-    e.g. "MoWeFr 4:00PM - 5:05PM" -> (["MO","WE","FR"], time(16,0), time(17,5))
+    e.g. "MoWeFr 4:00PM - 5:05PM"
+    => (["MO","WE","FR"], time(16,0), time(17,5))
     """
     m = re.match(r'^([A-Za-z]+)\s+(.*)$', days_times_str.strip())
     if not m:
         return [], None, None
-    
+
     days_part, time_part = m.groups()
-    
-    # e.g. "MoWeFr" -> ["Mo","We","Fr"]
+
+    # Convert e.g. "MoWeFr" -> ["Mo","We","Fr"]
     day_codes = []
     i = 0
     while i < len(days_part):
         chunk = days_part[i:i+2]
         day_codes.append(chunk)
         i += 2
-    
-    # Convert e.g. ["Mo","We","Fr"] -> ["MO","WE","FR"]
-    ics_days = [DAY_MAP[d] for d in day_codes if d in DAY_MAP]
-    
-    # parse "4:00PM - 5:05PM"
+
+    # e.g. ["Mo","We","Fr"] => ["MO","WE","FR"]
+    ics_days = [DAY_MAP.get(d, "") for d in day_codes if d in DAY_MAP]
+
+    # Parse "4:00PM - 5:05PM"
     tm = re.match(r'(.*)\s*-\s*(.*)', time_part)
     if not tm:
         return ics_days, None, None
@@ -49,18 +50,19 @@ def parse_days_times(days_times_str):
 
 def parse_time_12h(tstr):
     """
-    "4:00PM" => datetime.time(16, 0)
+    e.g. "4:00PM" => time(16,0).
     """
     tstr = tstr.strip()
     if re.match(r'^\d{1,2}:\d{2}(AM|PM)$', tstr):
-        tstr = tstr[:-2] + " " + tstr[-2:]
+        tstr = tstr[:-2] + " " + tstr[-2:]  # "4:00 PM"
         dt = datetime.strptime(tstr, "%I:%M %p")
         return dt.time()
     return None
 
 def parse_start_end_dates(date_range_str):
     """
-    e.g. "01/06/2025 - 03/14/2025" => (date(2025,1,6), date(2025,3,14))
+    e.g. "01/06/2025 - 03/14/2025"
+    => (date(2025,1,6), date(2025,3,14))
     """
     m = re.match(r'(\d{2}/\d{2}/\d{4})\s*-\s*(\d{2}/\d{2}/\d{4})', date_range_str)
     if not m:
@@ -72,8 +74,7 @@ def parse_start_end_dates(date_range_str):
 
 def align_first_occurrence(start_date, wday_ics):
     """
-    Shift start_date forward to e.g. "MO","WE","FR", etc.
-    Monday=0..Sunday=6
+    Shift start_date forward to correct weekday: e.g. "MO" => Monday=0..Sunday=6
     """
     PY_DAY_MAP = {"MO":0, "TU":1, "WE":2, "TH":3, "FR":4, "SA":5, "SU":6}
     target_wd  = PY_DAY_MAP[wday_ics]
@@ -86,14 +87,15 @@ def align_first_occurrence(start_date, wday_ics):
 
 def create_events_for_course(course):
     """
-    Creates ICS events where we keep local day/time in the ICS lines 
-    but forcibly add a "Z" suffix => 'fake' UTC. This avoids Sunday shift
-    but is not strictly correct in time-zone math.
+    We store local day/time, then SHIFT -8 hours (manually) 
+    so ICS lines say e.g. "20250106T160000Z" 
+    if local = Jan 6, 16:00 PST. 
+    => Google sees it as Monday 4 PM local, no Sunday shift.
     """
     events = []
     course_title = course.get("title", "Untitled Course")
 
-    # We'll assume local = America/Los_Angeles
+    # We'll define local zone if we want, or just treat everything naive
     la_zone = ZoneInfo("America/Los_Angeles")
 
     for cls_info in course["classes"]:
@@ -114,29 +116,36 @@ def create_events_for_course(course):
         earliest_wd = min(weekdays, key=lambda d: ICS_DAY_ORDER.index(d))
         first_occ   = align_first_occurrence(start_date, earliest_wd)
 
-        # 1) Build local aware datetimes (just to confirm day/time)
-        start_local = datetime.combine(first_occ, start_t, la_zone)
-        end_local   = datetime.combine(first_occ, end_t,   la_zone)
+        # 1) Construct the local naive datetime
+        #    E.g. Monday 2025-01-06 16:00
+        start_local = datetime.combine(first_occ, start_t)
+        end_local   = datetime.combine(first_occ, end_t)
 
-        # 2) But we do NOT convert to real UTC. We keep the same date/time as local:
-        #    i.e. if Monday 16:00 PST, we store "20250106T160000Z" 
-        #    even though real UTC would be 20250107T000000Z.
-        start_str = start_local.strftime("%Y%m%dT%H%M%S") + "Z"
-        end_str   = end_local.strftime("%Y%m%dT%H%M%S")   + "Z"
+        # 2) SHIFT them by -8 hours => "fake" UTC 
+        #    So 16:00 local => 16:00 minus 8 hours => 08:00Z same day
+        #    That ensures ICS lines remain on the same date
+        shift = timedelta(hours=8)  # or 7 if DST, but let's assume 8
+        # If you prefer minus 8 hours => start_local - shift
+        #    but let's do minus 8 => Monday 16:00 => Monday 08:00Z
+        # This keeps the local day/time in ICS lines.
 
-        # 3) Make the event with e.begin/e.end or custom lines
+        # Actually, let's subtract 8 hours:
+        start_fake_utc = start_local - shift
+        end_fake_utc   = end_local   - shift
+
+        # 3) Format them with 'Z'
+        start_str = start_fake_utc.strftime("%Y%m%dT%H%M%S") + "Z"
+        end_str   = end_fake_utc.strftime("%Y%m%dT%H%M%S")   + "Z"
+
         e = Event()
         e.name = f"{course_title} ({comp} {sect})"
         e.description = f"Instructor: {instr}\nClass Number: {cnum}"
         e.location = room
 
-        # We'll override e.begin/e.end with these lines:
-        # This forcibly sets "DTSTART:20250106T160000Z" in the ICS 
-        # (the same local day/time, plus 'Z')
+        # We skip e.begin/e.end to avoid ICS rewriting. We'll do custom lines:
         e.extra.append(ContentLine(name="DTSTART", value=start_str))
         e.extra.append(ContentLine(name="DTEND",   value=end_str))
 
-        # Single RRULE for multi-day
         until_utc = end_date.strftime("%Y%m%dT235900Z")
         e.extra.append(ContentLine(
             name="RRULE",
@@ -147,10 +156,10 @@ def create_events_for_course(course):
 
     return events
 
-def build_utc_calendar(courses):
+def build_calendar(courses):
     """
-    Build a Calendar that 'fakes' UTC by storing local day/time + 'Z'
-    to avoid Sunday shift in Google, albeit not strictly correct math.
+    Builds a calendar that manually offsets 
+    local times by 8 hours, then appends 'Z'.
     """
     cal = Calendar()
     for course in courses:

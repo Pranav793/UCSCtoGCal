@@ -6,7 +6,7 @@ from fastapi.responses import FileResponse
 import os
 from textparser import parse_schedule_text
 from localeventmaker import create_events_for_course
-from calendarmaker import build_utc_calendar
+from calendarmaker import build_calendar
 from datetime import date, timedelta
 from ics import Calendar, Event
 from pprint import pprint
@@ -81,7 +81,7 @@ def parse_schedule(payload: ScheduleRequest):
     #     for e in events:
     #         cal.events.add(e)
 
-    cal = build_utc_calendar(parsed_courses)
+    cal = build_calendar(parsed_courses)
     
     filename = "my.ics"
     with open(filename, 'w') as my_file:
