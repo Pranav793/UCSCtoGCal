@@ -130,8 +130,8 @@ def create_events_for_course(course):
         # This keeps the local day/time in ICS lines.
 
         # Actually, let's subtract 8 hours:
-        start_fake_utc = start_local - shift
-        end_fake_utc   = end_local   - shift
+        start_fake_utc = start_local + shift
+        end_fake_utc   = end_local   + shift
 
         # 3) Format them with 'Z'
         start_str = start_fake_utc.strftime("%Y%m%dT%H%M%S") + "Z"
