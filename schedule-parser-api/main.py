@@ -87,14 +87,14 @@ def parse_schedule(payload: ScheduleRequest):
     filename = "my.ics"
     with open(filename, 'w') as my_file:
         my_file.writelines(cal.serialize_iter())
-        my_file.replace("DTSTART;TZID=AMERICA/LOS_ANGELES", "DTSTART;TZID=America/Los_Angeles")
-        my_file.replace("DTEND;TZID=AMERICA/LOS_ANGELES", "DTEND;TZID=America/Los_Angeles")
+        # my_file.replace("DTSTART;TZID=AMERICA/LOS_ANGELES", "DTSTART;TZID=America/Los_Angeles")
+        # my_file.replace("DTEND;TZID=AMERICA/LOS_ANGELES", "DTEND;TZID=America/Los_Angeles")
 
-    # with fileinput.FileInput(filename, inplace=True, backup='.bak') as file:
-    #     for line in file:
-    #         print(line.replace("DTSTART;TZID=AMERICA/LOS_ANGELES", "DTSTART;TZID=America/Los_Angeles"), end='')
-    #     for line in file:
-    #         print(line.replace("DTEND;TZID=AMERICA/LOS_ANGELES", "DTEND;TZID=America/Los_Angeles"), end='')
+    with fileinput.FileInput(filename, inplace=True, backup='.bak') as file:
+        for line in file:
+            print(line.replace("DTSTART;TZID=AMERICA/LOS_ANGELES", "DTSTART;TZID=America/Los_Angeles"), end='')
+        for line in file:
+            print(line.replace("DTEND;TZID=AMERICA/LOS_ANGELES", "DTEND;TZID=America/Los_Angeles"), end='')
 
     
 
