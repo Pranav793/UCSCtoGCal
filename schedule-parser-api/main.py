@@ -6,6 +6,7 @@ from fastapi.responses import FileResponse
 import os
 from textparser import parse_schedule_text
 from localeventmaker import create_events_for_course
+from calendarmaker import build_calendar_with_timezone
 from datetime import date, timedelta
 from ics import Calendar, Event
 from pprint import pprint
@@ -73,12 +74,14 @@ def parse_schedule(payload: ScheduleRequest):
     # 2. Call your actual parser function
     parsed_courses = parse_schedule_text(schedule_text)
 
-    cal = Calendar()
+    # cal = Calendar()
 
-    for course in parsed_courses:
-        events = create_events_for_course(course)
-        for e in events:
-            cal.events.add(e)
+    # for course in parsed_courses:
+    #     events = create_events_for_course(course)
+    #     for e in events:
+    #         cal.events.add(e)
+
+    cal = build_calendar_with_timezone(parsed_courses)
     
     filename = "my.ics"
     with open(filename, 'w') as my_file:
