@@ -281,9 +281,9 @@ def create_events_for_course(course):
         e.location = room
 
         # *Floating* local times: no time zone offset, no 'Z'
-        shift = timedelta(hours=8)
-        start_dt = datetime.combine(first_occ, start_t) + shift # naive local datetime
-        end_dt   = datetime.combine(first_occ, end_t) + shift   # naive local datetime
+        tz_shift = timedelta(hours=8)
+        start_dt = datetime.combine(first_occ, start_t) + tz_shift # naive local datetime
+        end_dt   = datetime.combine(first_occ, end_t) + tz_shift   # naive local datetime
         e.begin  = start_dt
         e.end    = end_dt
 
