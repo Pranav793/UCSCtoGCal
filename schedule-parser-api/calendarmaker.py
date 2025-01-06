@@ -160,7 +160,7 @@ def add_vtimezone_block(cal: Calendar):
     """
     tz_lines = [
         # Note: This minimal block is typically recognized by modern calendars
-        "X-WR-TIMEZONE:America/Los_Angeles",
+        # "X-WR-TIMEZONE:America/Los_Angeles",
         "BEGIN:VTIMEZONE",
         "TZID:America/Los_Angeles",
         "X-LIC-LOCATION:America/Los_Angeles",
