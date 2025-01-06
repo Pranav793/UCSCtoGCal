@@ -148,7 +148,6 @@ def add_vtimezone_block(cal: Calendar):
         "BEGIN:VTIMEZONE",
         "TZID:America/Los_Angeles",
         "X-LIC-LOCATION:America/Los_Angeles",
-        "",
         "BEGIN:DAYLIGHT",
         "TZOFFSETFROM:-0800",
         "TZOFFSETTO:-0700",
@@ -156,7 +155,6 @@ def add_vtimezone_block(cal: Calendar):
         "DTSTART:19700308T020000",
         "RRULE:FREQ=YEARLY;BYMONTH=3;BYDAY=2SU",
         "END:DAYLIGHT",
-        "",
         "BEGIN:STANDARD",
         "TZOFFSETFROM:-0700",
         "TZOFFSETTO:-0800",
@@ -164,11 +162,13 @@ def add_vtimezone_block(cal: Calendar):
         "DTSTART:19701101T020000",
         "RRULE:FREQ=YEARLY;BYMONTH=11;BYDAY=1SU",
         "END:STANDARD",
-        "",
         "END:VTIMEZONE"
     ]
-    for l in lines:
-        cal.extra.append(ContentLine.parse_line(l))
+    for line in lines:
+        cal.extra.append(ContentLine(
+            name=line.split(":")[0],
+            value=line.split(":")[1]
+        ))
 
 def build_calendar_with_timezone(courses):
     """
