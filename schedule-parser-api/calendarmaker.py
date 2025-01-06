@@ -127,7 +127,6 @@ def create_multi_day_event(course):
         aligned_start = align_earliest_day(start_d, ics_days)
 
         # build naive local datetimes
-        shift = timedelta(hours=8)
         dt_begin = datetime.combine(aligned_start, start_t)
         dt_end   = datetime.combine(aligned_start, end_t)
 
