@@ -143,8 +143,12 @@ def create_events_for_course(course):
         e.location = room
 
         # We skip e.begin/e.end to avoid ICS rewriting. We'll do custom lines:
-        e.extra.append(ContentLine(name="DTSTART", value=start_str))
-        e.extra.append(ContentLine(name="DTEND",   value=end_str))
+        # e.extra.append(ContentLine(
+        #     name="DTSTART;TZID=America/Los_Angeles",
+        #     value=start_str
+        # ))
+        e.extra.append(ContentLine(name="DTSTART;TZID=America/Los_Angeles", value=start_str))
+        e.extra.append(ContentLine(name="DTEND;TZID=America/Los_Angeles",   value=end_str))
 
         until_utc = end_date.strftime("%Y%m%dT235900Z")
         e.extra.append(ContentLine(
