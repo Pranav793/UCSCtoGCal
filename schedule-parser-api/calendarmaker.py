@@ -186,13 +186,15 @@ def add_vtimezone_block(cal: Calendar):
             value=i.split(":")[1],
         ))
 
+    return cal
+
 def build_calendar_with_timezone(courses):
     """
     Build a single Calendar, add the LA time zone block, 
     and add events from your parse.
     """
     cal = Calendar()
-    add_vtimezone_block(cal)  # Insert the LA time zone block
+    cal = add_vtimezone_block(cal)  # Insert the LA time zone block
 
     for course in courses:
         events = create_events_for_course(course)
