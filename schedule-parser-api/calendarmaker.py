@@ -177,7 +177,7 @@ def build_calendar_with_timezone(courses):
     """
     cal = Calendar()
     # Hardcode the LA timezone block
-    add_vtimezone_block(cal)
+    cal = add_vtimezone_block(cal)
 
     # For each course dict, create the events
     for course in courses:
