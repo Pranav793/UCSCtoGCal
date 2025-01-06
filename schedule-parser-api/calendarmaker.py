@@ -169,6 +169,8 @@ def add_vtimezone_block(cal: Calendar):
             name=line.split(":")[0],
             value=line.split(":")[1]
         ))
+    
+    return cal
 
 def build_calendar_with_timezone(courses):
     """
