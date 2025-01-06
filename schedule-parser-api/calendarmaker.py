@@ -90,7 +90,7 @@ def align_earliest_day(start_date, ics_days):
         diff = target_wd - current_wd
     else:
         diff = 7 - (current_wd - target_wd)
-    return start_date + timedelta(days=diff)
+    return start_date + timedelta(days=diff) + timedelta(hours=8)
 
 def create_multi_day_event(course):
     """
@@ -127,6 +127,7 @@ def create_multi_day_event(course):
         aligned_start = align_earliest_day(start_d, ics_days)
 
         # build naive local datetimes
+        shift = timedelta(hours=8)
         dt_begin = datetime.combine(aligned_start, start_t)
         dt_end   = datetime.combine(aligned_start, end_t)
 
