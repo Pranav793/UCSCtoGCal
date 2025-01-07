@@ -140,9 +140,9 @@ def create_multi_day_event(course):
         e.description = f"Instructor: {instr}\nClass Number: {cnum}"
         e.location    = room
 
-        # FIXING THE END TIME ISSUE
-        e.begin = dt_begin
-        e.end = dt_end
+        # # FIXING THE END TIME ISSUE
+        # e.begin = dt_begin
+        # e.end = dt_end
 
         # Instead of e.begin/e.end, write lines with TZID=America/Los_Angeles
         e.extra.append(ContentLine(
