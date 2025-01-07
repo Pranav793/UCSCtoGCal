@@ -7,7 +7,7 @@ function App() {
   const [scheduleText, setScheduleText] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [showInstructions, setShowInstructions] = useState(false);
-  const [onlyEnrolledClasses, setOnlyEnrolledClasses] = useState(false);
+  const [onlyEnrolledCourses, setOnlyEnrolledCourses] = useState(false);
 
 
   const handleDownloadICS = async () => {
@@ -81,8 +81,8 @@ function App() {
         <label>
           <input
             type="checkbox"
-            checked={onlyEnrolledClasses}
-            onChange={(e) => setOnlyEnrolledClasses(e.target.checked)}
+            checked={onlyEnrolledCourses}
+            onChange={(e) => setOnlyEnrolledCourses(e.target.checked)}
           />
            Only include enrolled classes
         </label>
