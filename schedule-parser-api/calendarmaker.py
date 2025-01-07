@@ -46,7 +46,6 @@ def parse_days_times(days_times_str):
 
     start_t = parse_time_12h(start_str)
     end_t   = parse_time_12h(end_str)
-    print(ics_days, start_t, end_t)
     return ics_days, start_t, end_t
 
 def parse_time_12h(tstr):
@@ -140,6 +139,10 @@ def create_multi_day_event(course):
         e.name        = f"{title} ({comp} {sect})"
         e.description = f"Instructor: {instr}\nClass Number: {cnum}"
         e.location    = room
+
+        # FIXING THE END TIME ISSUE
+        e.begin = dt_begin
+        e.end = dt_end
 
         # Instead of e.begin/e.end, write lines with TZID=America/Los_Angeles
         e.extra.append(ContentLine(
