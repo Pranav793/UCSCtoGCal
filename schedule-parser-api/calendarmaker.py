@@ -46,6 +46,7 @@ def parse_days_times(days_times_str):
 
     start_t = parse_time_12h(start_str)
     end_t   = parse_time_12h(end_str)
+    print(ics_days, start_t, end_t)
     return ics_days, start_t, end_t
 
 def parse_time_12h(tstr):

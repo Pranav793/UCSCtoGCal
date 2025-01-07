@@ -21,7 +21,6 @@ def parse_schedule_text(text: str):
         if course:
             courses.append(course)
 
-    print(courses)
     return courses
 
 
