@@ -74,7 +74,6 @@ def parse_schedule(payload: ScheduleRequest):
     schedule_text = payload.scheduleText
     onlyenrolledcourses = payload.onlyEnrolledCourses
 
-    print(onlyenrolledcourses)
     # 2. Call your actual parser function
     parsed_courses = parse_schedule_text(schedule_text, onlyenrolledcourses)
 

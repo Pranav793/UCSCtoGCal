@@ -15,13 +15,14 @@ def parse_schedule_text(text: str, onlyenrolledcourses: bool):
     course_chunks = [chunk.strip() for chunk in course_chunks if chunk.strip()]
 
     # Parse each chunk
-    print(type(onlyenrolledcourses), onlyenrolledcourses)
+    print("onlyenrolledcourses", onlyenrolledcourses)
     courses = []
     for chunk in course_chunks:
         course = parse_course_chunk(chunk)
         if course:
             courses.append(course)
 
+    print(courses)
     return courses
 
 
