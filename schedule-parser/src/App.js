@@ -20,7 +20,7 @@ function App() {
     try {
       // We want to request the file as a BLOB (binary) so we can trigger a download
       const response = await api.post('/parseSchedule',
-        { scheduleText, onlyEnrolledClasses },
+        { scheduleText, onlyEnrolledCourses },
         { responseType: 'blob' }  // <-- important
       );
       // Now we have a blob of ICS data
