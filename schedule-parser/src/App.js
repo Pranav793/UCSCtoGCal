@@ -7,6 +7,8 @@ function App() {
   const [scheduleText, setScheduleText] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [showInstructions, setShowInstructions] = useState(false);
+  const [onlyEnrolledClasses, setOnlyEnrolledClasses] = useState(false);
+
 
   const handleDownloadICS = async () => {
     if (!scheduleText.trim()) {
@@ -18,7 +20,7 @@ function App() {
     try {
       // We want to request the file as a BLOB (binary) so we can trigger a download
       const response = await api.post('/parseSchedule',
-        { scheduleText },
+        { scheduleText, onlyEnrolledClasses },
         { responseType: 'blob' }  // <-- important
       );
       // Now we have a blob of ICS data
@@ -74,6 +76,19 @@ function App() {
           onChange={(e) => setScheduleText(e.target.value)}
         />
         <br />
+
+        {/* Toggle Button for Only Enrolled Classes */}
+        <label>
+          <input
+            type="checkbox"
+            checked={onlyEnrolledClasses}
+            onChange={(e) => setOnlyEnrolledClasses(e.target.checked)}
+          />
+           Only include enrolled classes
+        </label>
+        <br />
+
+
         <button onClick={handleDownloadICS} disabled={isLoading}>
           {isLoading ? 'Downloading...' : 'Download Schedule File'}
         </button>
