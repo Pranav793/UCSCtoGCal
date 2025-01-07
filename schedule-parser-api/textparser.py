@@ -2,7 +2,7 @@ import re
 from pprint import pprint
 t = 'CSE 111 - Adv Programming\n\t\t\nStatus\tUnits\tGrading\tGrade\tDeadlines\nEnrolled\n5.00\nGraded\n \nAcademic Calendar Deadlines\nClass Nbr\tSection\tComponent\tDays & Times\tRoom\tInstructor\tStart/End Date\n30481\n01\nLecture\nMoWeFr 4:00PM - 5:05PM\nMedia Theater M110\nEthan  Sifferman\n01/06/2025 - 03/14/2025\n33007\n01E\nDiscussion\nWe 10:40AM - 11:45AM\nEngineer 2 194\nTo be Announced\n01/06/2025 - 03/14/2025\nCSE 115B - Software Design Pro\n\t\t\nStatus\tUnits\tGrading\tGrade\tGeneral Education\tDeadlines\nEnrolled\n5.00\nGraded\n \nPR-E\nAcademic Calendar Deadlines\nClass Nbr\tSection\tComponent\tDays & Times\tRoom\tInstructor\tStart/End Date\n30476\n01\nLecture\nTuTh 11:40AM - 1:15PM\nMerrill Acad 102\nRichard K Jullig\n01/06/2025 - 03/14/2025\nCSE 123A - Engr Design Proj I\n\t\t\nStatus\tUnits\tGrading\tGrade\tGeneral Education\tDeadlines\nDropped\n5.00\nGraded\n \nPR-E\nAcademic Calendar Deadlines\nClass Nbr\tSection\tComponent\tDays & Times\tRoom\tInstructor\tStart/End Date\n32151\n01\nLecture\nTuTh 5:20PM - 6:55PM\nSoc Sci 2 075\nDavid Charles Harrison\n01/06/2025 - 03/14/2025\nCSE 185E - Tech Writ Comp Engs\n\t\t\nStatus\tUnits\tGrading\tGrade\tDeadlines\nEnrolled\n5.00\nGraded\n \nAcademic Calendar Deadlines\nClass Nbr\tSection\tComponent\tDays & Times\tRoom\tInstructor\tStart/End Date\n32153\n01E\nDiscussion\nTu 7:10PM - 8:15PM\nMerrill Acad 132\nTo be Announced\n01/06/2025 - 03/14/2025\n32158\n01\nLecture\nTuTh 1:30PM - 3:05PM\nClassroomUnit 001\nGerald Bennett Moulds\n01/06/2025 - 03/14/2025'
 
-def parse_schedule_text(text: str):
+def parse_schedule_text(text: str, onlyenrolledcourses: bool):
     """
     Parse the entire schedule text into a list of course dictionaries.
     """
@@ -15,6 +15,7 @@ def parse_schedule_text(text: str):
     course_chunks = [chunk.strip() for chunk in course_chunks if chunk.strip()]
 
     # Parse each chunk
+    print(type(onlyenrolledcourses), onlyenrolledcourses)
     courses = []
     for chunk in course_chunks:
         course = parse_course_chunk(chunk)

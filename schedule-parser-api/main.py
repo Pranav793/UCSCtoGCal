@@ -63,7 +63,7 @@ async def info():
 
 # @app.post("/parseSchedule", response_model=List[Course])
 @app.post("/parseSchedule")
-def parse_schedule(payload: ScheduleRequest):
+def parse_schedule(payload: ScheduleRequest, onlyenrolledcourses: bool):
     """
     Endpoint to parse the UCSC schedule text.
     Expects JSON: { "scheduleText": "CSE 111 - Adv Programming\n..." }
@@ -72,8 +72,9 @@ def parse_schedule(payload: ScheduleRequest):
     # 1. Extract the schedule text from the request
     schedule_text = payload.scheduleText
 
+    print(onlyenrolledcourses)
     # 2. Call your actual parser function
-    parsed_courses = parse_schedule_text(schedule_text)
+    parsed_courses = parse_schedule_text(schedule_text, onlyenrolledcourses)
 
     # cal = Calendar()
 
