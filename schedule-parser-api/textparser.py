@@ -22,9 +22,12 @@ def parse_schedule_text(text: str, onlyenrolledcourses: bool):
         if course:
             courses.append(course)
 
-    print(courses)
+    if onlyenrolledcourses:
+        courses = select_onlyenrolledcourses(courses)
     return courses
 
+def select_onlyenrolledcourses(courses: list):
+    return [c for c in courses if c["metadata"]["status"] == "Enrolled"]
 
 def parse_course_chunk(chunk: str):
     """
